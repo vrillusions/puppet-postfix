@@ -19,10 +19,10 @@
 #    include postfix
 #
 #    postfix::config {
-#      "smtp_use_tls"            => "yes";
-#      "smtp_sasl_auth_enable"   => "yes";
-#      "smtp_sasl_password_maps" => "hash:/etc/postfix/my_sasl_passwords";
-#      "relayhost"               => "[mail.example.com]:587";
+#      "smtp_use_tls":            value => "yes";
+#      "smtp_sasl_auth_enable":   value => "yes";
+#      "smtp_sasl_password_maps": value => "hash:/etc/postfix/my_sasl_passwords";
+#      "relayhost":               value => "[mail.example.com]:587";
 #    }
 #  }
 #

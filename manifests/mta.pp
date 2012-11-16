@@ -18,11 +18,11 @@
 # Example usage:
 #
 #   node 'toto.example.com' {
-#     $postfix_relayhost = 'mail.example.com'
-#     $postfix_smtp_listen = '0.0.0.0'
-#     $postfix_mydestination = '$myorigin, myapp.example.com'
-#
-#     include postfix::mta
+#     class {'postfix::mta':
+#       postfix_relayhost     => 'mail.example.com',
+#       postfix_smtp_listen   => '0.0.0.0',
+#       postfix_mydestination => '$myorigin, myapp.example.com',
+#     }
 #
 #     postfix::transport { 'myapp.example.com':
 #       ensure => present,
@@ -30,24 +30,16 @@
 #     }
 #   }
 #
-class postfix::mta {
+class postfix::mta (
+    $postfix_relayhost,
+    $postfix_mydestination = $postfix::params::postfix_mydestination,
+    $postfix_mynetworks    = $postfix::params::postfix_mynetworks,
+    $root_mail_recipient   = $postfix::params::root_mail_recipient,
+  ) inherits postfix::params {
 
-  case $postfix_relayhost {
-    '':      { fail('Required $postfix_relayhost variable is not defined.') }
-    default: {}
+  class {'postfix':
+    root_mail_recipient   => $root_mail_recipient,
   }
-
-  case $postfix_mydestination {
-    '':      { $postfix_mydestination = '$myorigin' }
-    default: {}
-  }
-
-  case $postfix_mynetworks {
-    "":      { $postfix_mynetworks = "127.0.0.0/8" }
-    default: {}
-  }
-
-  include postfix
 
   postfix::config {
     'mydestination':       value => $postfix_mydestination;

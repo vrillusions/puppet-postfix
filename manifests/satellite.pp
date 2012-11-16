@@ -11,25 +11,41 @@
 # - *valid_fqdn*
 # - every global variable which works for class 'postfix' will work here.
 #
+# Requires:
+# - postfix_relayhost
+#
 # Example usage:
 #
 #   node 'toto.local.lan' {
-#     $postfix_relayhost = 'mail.example.com'
-#     $valid_fqdn = 'toto.example.com'
-#     $root_mail_recipient = 'the.sysadmin@example.com'
-#
-#     include postfix::satellite
+#     class {'postfix::satellite':
+#       postfix_relayhost   => 'mail.example.com',
+#       valid_fqdn          => 'toto.example.com',
+#       root_mail_recipient => 'the.sysadmin@example.com',
+#     }
 #   }
 #
-class postfix::satellite {
+class postfix::satellite (
+    $postfix_relayhost,
+    $valid_fqdn            = '',
+    $root_mail_recipient   = $postfix::params::root_mail_recipient,
+    $postfix_mydestination = $postfix::params::postfix_mydestination,
+    $postfix_mynetworks    = $postfix::params::postfix_mynetworks,
+  ) inherits postfix::params {
 
   # If $valid_fqdn exists, use it to override $fqdn
-  case $valid_fqdn {
-    '':      { $valid_fqdn = $::fqdn }
-    default: { $fqdn = $valid_fqdn }
+  if ($valid_fqdn == '') {
+    $real_valid_fqdn = $::fqdn
+  } else {
+    $real_valid_fqdn = $valid_fqdn
+    $fqdn = $valid_fqdn
+  }  
+  
+  class {'postfix::mta':
+    postfix_relayhost     => $postfix_relayhost,
+    postfix_mydestination => $postfix_mydestination, 
+    postfix_mynetworks    => $postfix_mynetworks,
+    root_mail_recipient   => $root_mail_recipient,
   }
-
-  include postfix::mta
 
   postfix::virtual { "@${valid_fqdn}":
     ensure      => present,

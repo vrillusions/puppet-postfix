@@ -12,76 +12,23 @@
 # Example usage:
 #
 #   node 'toto.example.com' {
-#     $postfix_smtp_listen = '192.168.1.10'
-#     include postfix
+#     class {'postfix':
+#       postfix_smtp_listen => '192.168.1.10',
+#     }
 #   }
 #
-class postfix {
-
-  # selinux labels differ from one distribution to another
-  case $::operatingsystem {
-
-    RedHat, CentOS: {
-      case $::lsbmajdistrelease {
-        '4':     { $postfix_seltype = 'etc_t' }
-        '5','6': { $postfix_seltype = 'postfix_etc_t' }
-        default: { $postfix_seltype = undef }
-      }
-    }
-
-    default: {
-      $postfix_seltype = undef
-    }
-  }
-
-  # Default value for various options
-  if $postfix_smtp_listen == '' {
-    $postfix_smtp_listen = '127.0.0.1'
-  }
-  if $root_mail_recipient == '' {
-    $root_mail_recipient = 'nobody'
-  }
-  if $postfix_use_amavisd == '' {
-    $postfix_use_amavisd = 'no'
-  }
-  if $postfix_use_dovecot_lda == '' {
-    $postfix_use_dovecot_lda = 'no'
-  }
-  if $postfix_use_schleuder == '' {
-    $postfix_use_schleuder = 'no'
-  }
-  if $postfix_use_sympa == '' {
-    $postfix_use_sympa = 'no'
-  }
-  if $postfix_mail_user == '' {
-    $postfix_mail_user = 'vmail'
-  }
-
-  case $::operatingsystem {
-    /RedHat|CentOS|Fedora/: {
-      $mailx_package = 'mailx'
-    }
-
-    /Debian|kFreeBSD/: {
-      $mailx_package = $::lsbdistcodename ? {
-        /lenny|etch|sarge/ => 'mailx',
-        default            => 'bsd-mailx',
-      }
-    }
-
-    'Ubuntu': {
-      if (versioncmp('10', $::lsbmajdistrelease) > 0) {
-        $mailx_package = 'mailx'
-      } else {
-        $mailx_package = 'bsd-mailx'
-      }
-    }
-  }
-
-  $master_os_template = $::operatingsystem ? {
-    /RedHat|CentOS/          => template('postfix/master.cf.redhat.erb', 'postfix/master.cf.common.erb'),
-    /Debian|Ubuntu|kFreeBSD/ => template('postfix/master.cf.debian.erb', 'postfix/master.cf.common.erb'),
-  }
+class postfix(
+    $postfix_seltype         = $postfix::params::postfix_seltype,
+    $postfix_smtp_listen     = $postfix::params::postfix_smtp_listen,
+    $root_mail_recipient     = $postfix::params::root_mail_recipient,
+    $postfix_use_amavisd     = $postfix::params::postfix_use_amavisd,
+    $postfix_use_dovecot_lda = $postfix::params::postfix_use_dovecot_lda,
+    $postfix_use_schleuder   = $postfix::params::postfix_use_schleuder,
+    $postfix_use_sympa       = $postfix::params::postfix_use_sympa,
+    $postfix_mail_user       = $postfix::params::postfix_mail_user,
+    $mailx_package           = $postfix::params::mailx_package,
+    $master_os_template      = $postfix::params::master_os_template
+  ) inherits postfix::params {
 
   package { 'postfix':
     ensure => installed,
