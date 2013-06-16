@@ -10,7 +10,7 @@
 <% if postfix_smtp_listen == 'all' -%>
 smtp      inet  n       -       n       -       -       smtpd
 <% else -%>
-<%= postfix_smtp_listen %>:smtp      inet  n       -       n       -       -       smtpd
+<%= @postfix_smtp_listen %>:smtp      inet  n       -       n       -       -       smtpd
 <% end -%>
 #smtp      inet  n       -       n       -       -       smtpd
 #submission inet n       -       n       -       -       smtpd
