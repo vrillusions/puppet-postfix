@@ -9,7 +9,7 @@
 # ==========================================================================
 <% if has_variable?('postfix_master_smtp') -%>
 <%= @postfix_master_smtp %>
-<% elsif postfix_smtp_listen == 'all' -%>
+<% elsif @postfix_smtp_listen == 'all' -%>
 smtp      inet  n       -       -       -       -       smtpd
 <% else -%>
 <%= @postfix_smtp_listen %>:smtp      inet  n       -       -       -       -       smtpd
