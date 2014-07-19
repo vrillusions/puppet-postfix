@@ -30,7 +30,7 @@ class postfix(
     $master_os_template      = $postfix::params::master_os_template
   ) inherits postfix::params {
 
-  package { 'postfix':
+  package { ['postfix','libsasl2-modules']:
     ensure => installed,
   }
 
