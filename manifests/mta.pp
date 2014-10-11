@@ -3,7 +3,7 @@
 # This class configures a minimal MTA, delivering mail to
 # $mydestination.
 #
-# Either a valid relay host or the special word 'direct' is required 
+# Either a valid relay host or the special word 'direct' is required
 # ($relayhost) for outbound email.
 #
 # transport & virtual maps get configured and can be populated with
@@ -33,7 +33,7 @@ class postfix::mta (
 
   validate_re($relayhost, '^\S+$',
               'Wrong value for $relayhost')
-  validate_re($mydestination, '^\S+$',
+  validate_re($mydestination, '^\S+(?:,\s*\S+)*$',
               'Wrong value for $mydestination')
   validate_re($mynetworks, '^\S+$',
               'Wrong value for $mynetworks')

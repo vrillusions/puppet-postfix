@@ -3,8 +3,13 @@ require 'spec_helper'
 describe 'postfix::virtual' do
   let (:title) { 'foo' }
   let (:facts) { {
-    :osfamily => 'Debian',
+    :augeasversion => '1.2.0',
+    :osfamily      => 'Debian',
+    :rubyversion   => '1.9.3',
   } }
+  let :pre_condition do
+    "class { 'augeas': }"
+  end
 
   context 'when not sending destination' do
     it 'should fail' do
@@ -83,7 +88,7 @@ describe 'postfix::virtual' do
       :destination => 'bar',
     } }
 
-    it { should include_class('postfix::augeas') }
+    it { should contain_class('postfix::augeas') }
     it { should contain_augeas('Postfix virtual - foo').with(
       :incl    => '/etc/postfix/virtual',
       :lens    => 'Postfix_Virtual.lns',
@@ -101,7 +106,7 @@ describe 'postfix::virtual' do
       :ensure      => 'present',
     } }
 
-    it { should include_class('postfix::augeas') }
+    it { should contain_class('postfix::augeas') }
     it { should contain_augeas('Postfix virtual - foo').with(
       :incl    => '/tmp/virtual',
       :lens    => 'Postfix_Virtual.lns',
@@ -118,7 +123,7 @@ describe 'postfix::virtual' do
       :ensure      => 'absent',
     } }
 
-    it { should include_class('postfix::augeas') }
+    it { should contain_class('postfix::augeas') }
     it { should contain_augeas('Postfix virtual - foo').with(
       :incl    => '/etc/postfix/virtual',
       :lens    => 'Postfix_Virtual.lns',

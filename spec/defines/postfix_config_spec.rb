@@ -3,15 +3,18 @@ require 'spec_helper'
 describe 'postfix::config' do
   let (:title) { 'foo' }
   let (:facts) { {
-    :osfamily => 'Debian',
-    :needs_postfix_class => true,
+    :lsbdistcodename => 'wheezy',
+    :osfamily        => 'Debian',
   } }
+  let :pre_condition do
+    "class { 'postfix': }"
+  end
 
   context 'when not passing value' do
     it 'should fail' do
       expect {
         should contain_augeas("set postfix 'foo'")
-      }.to raise_error(Puppet::Error, /Must pass value to Postfix::Config/)
+      }.to raise_error(Puppet::Error, /value can not be empty/)
     end
   end
 
@@ -46,7 +49,7 @@ describe 'postfix::config' do
     it 'should fail' do
       expect {
         should contain_augeas("set postfix 'foo'")
-      }.to raise_error(Puppet::Error, /must be either 'present' or 'absent'/)
+      }.to raise_error(Puppet::Error, /must be either 'present', 'absent' or 'blank'/)
     end
   end
 

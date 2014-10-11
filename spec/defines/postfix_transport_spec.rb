@@ -3,8 +3,13 @@ require 'spec_helper'
 describe 'postfix::transport' do
   let (:title) { 'foo' }
   let (:facts) { {
-    :osfamily => 'Debian',
+    :augeasversion => '1.2.0',
+    :osfamily      => 'Debian',
+    :rubyversion   => '1.9.3',
   } }
+  let :pre_condition do
+    "class { 'augeas': }"
+  end
 
   context 'when sending wrong type for destination' do
     let (:params) { {
@@ -84,7 +89,7 @@ describe 'postfix::transport' do
   end
 
   context 'when using default values' do
-    it { should include_class('postfix::augeas') }
+    it { should contain_class('postfix::augeas') }
     it { should contain_augeas('Postfix transport - foo').with(
       :incl    => '/etc/postfix/transport',
       :lens    => 'Postfix_Transport.lns',
@@ -104,7 +109,7 @@ describe 'postfix::transport' do
       :ensure      => 'present',
     } }
 
-    it { should include_class('postfix::augeas') }
+    it { should contain_class('postfix::augeas') }
     it { should contain_augeas('Postfix transport - foo').with(
       :incl    => '/tmp/transport',
       :lens    => 'Postfix_Transport.lns',
@@ -122,7 +127,7 @@ describe 'postfix::transport' do
       :ensure      => 'absent',
     } }
 
-    it { should include_class('postfix::augeas') }
+    it { should contain_class('postfix::augeas') }
     it { should contain_augeas('Postfix transport - foo').with(
       :incl    => '/etc/postfix/transport',
       :lens    => 'Postfix_Transport.lns',
